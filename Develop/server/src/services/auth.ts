@@ -1,39 +1,46 @@
-import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-
 import dotenv from 'dotenv';
+
 dotenv.config();
 
+// Define token payload
 interface JwtPayload {
-  _id: unknown;
-  username: string;
-  email: string,
+	_id: unknown;
+	username: string;
+	email: string;
 }
+//check if use r is logged in
+export const authMiddleware = ({ req }: { req: any }) => {
+	// Get token from request
+	let token = req.body.token || req.query.token || req.headers.authorization;
 
-export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers.authorization;
+	if (req.headers.authorization) {
+		token = token.split(' ').pop().trim();
+	}
 
-  if (authHeader) {
-    const token = authHeader.split(' ')[1];
+	// If no token found, return request as is
+	if (!token) {
+		return req;
+	}
 
-    const secretKey = process.env.JWT_SECRET_KEY || '';
+	try {
+		// Get our secret key for checking tokens
+		const secretKey = process.env.JWT_SECRET_KEY || '';
+		// Check if token is valid and get user info from it
+		const { data } = jwt.verify(token, secretKey) as { data: JwtPayload };
+		req.user = data;
+	} catch {
+		console.log('Invalid token');
+	}
 
-    jwt.verify(token, secretKey, (err, user) => {
-      if (err) {
-        return res.sendStatus(403); // Forbidden
-      }
-
-      req.user = user as JwtPayload;
-      return next();
-    });
-  } else {
-    res.sendStatus(401); // Unauthorized
-  }
+	return req;
 };
 
+// Create a new token when user logs in or signs up
 export const signToken = (username: string, email: string, _id: unknown) => {
-  const payload = { username, email, _id };
-  const secretKey = process.env.JWT_SECRET_KEY || '';
+	const payload = { username, email, _id };
+	const secretKey = process.env.JWT_SECRET_KEY || '';
 
-  return jwt.sign(payload, secretKey, { expiresIn: '1h' });
+	//return token
+	return jwt.sign({ data: payload }, secretKey, { expiresIn: '2h' });
 };
