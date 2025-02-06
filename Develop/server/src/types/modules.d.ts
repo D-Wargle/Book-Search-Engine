@@ -6,6 +6,14 @@ declare module 'bcrypt' {
     export function compareSync(
         data: string,
         encrypted: string): Promise<boolean>;
+
+  export function compare(password: string, password1: any) {
+    throw new Error('Function not implemented.');
+  }
+
+  export function hash(password: string, saltRounds: number): string | PromiseLike<string> {
+    throw new Error('Function not implemented.');
+  }
 }
 
 declare module 'jsonwebtoken' {
