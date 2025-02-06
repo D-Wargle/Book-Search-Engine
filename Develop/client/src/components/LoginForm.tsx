@@ -7,7 +7,7 @@ import Auth from '../utils/auth';
 import type { User } from '../models/User';
 import { useMutation } from '@apollo/client';
 import { LOGIN_USER } from '../utils/mutations';
-import { ADD_USER } from '../utils/mutations';
+// import { ADD_USER } from '../utils/mutations';
 // import { loginUser } from '../utils/API';
 
 // biome-ignore lint/correctness/noEmptyPattern: <explanation>
