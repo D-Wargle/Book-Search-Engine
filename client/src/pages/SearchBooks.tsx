@@ -78,7 +78,7 @@ const SearchBooks = () => {
       return false;
     }
 
-  const bookToSave = searchedBooks.find((book: Book) => book.bookId === bookId);
+  const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
   if (!bookToSave) {
     return false;
   }
